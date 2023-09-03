@@ -10,14 +10,12 @@ async function bootstrap() {
   const swagTitle = configService.get('swagger.title');
   const swagDescription = configService.get('swagger.description');
   const appVersion = configService.get('swagger.version');
-  const appHost = configService.get('app.host');
   const appPort = configService.get('app.port');
   const environment = configService.get('environment');
 
   const initSwagger = (
     app: INestApplication,
     swaggerConfig: {
-      serverUrl: string;
       title: string;
       description: string;
       version: string;
@@ -27,7 +25,6 @@ async function bootstrap() {
       .setTitle(swaggerConfig.title)
       .setDescription(swaggerConfig.description)
       .setVersion(swaggerConfig.version)
-      .addServer(swaggerConfig.serverUrl)
       .addBearerAuth()
       .build();
 
@@ -41,7 +38,6 @@ async function bootstrap() {
 
   if (environment !== 'production') {
     initSwagger(app, {
-      serverUrl: appHost,
       description: swagDescription,
       title: swagTitle,
       version: appVersion,
