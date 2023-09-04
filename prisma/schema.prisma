@@ -15,5 +15,11 @@ model User {
   name      String?
   email     String    @unique
   password  String    @db.VarChar(255)
-  lastLogin DateTime? @db.Timestamptz(6)
+  lastLogin DateTime? @default(now()) @db.Timestamptz(6)
+  role      RoleType  @default(Staff)
+}
+
+enum RoleType {
+  Manager
+  Staff
 }
