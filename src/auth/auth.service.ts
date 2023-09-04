@@ -5,6 +5,7 @@ import { UserSignUpDto } from './dto/sign-up.dto';
 import { User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AppUtilities } from '../app.utilities';
+import { execSync } from 'child_process';
 
 @Injectable()
 export class AuthService {
@@ -48,5 +49,13 @@ export class AuthService {
 
   private async signPayload(payload: { sub: string }): Promise<string> {
     return await this.jwtService.signAsync(payload);
+  }
+
+  async runSeed(seedFile: string) {
+    try {
+      execSync(`yarn db:seed-runner --seed-file=${seedFile}`);
+    } catch (e) {
+      throw e;
+    }
   }
 }
