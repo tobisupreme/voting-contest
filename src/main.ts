@@ -2,10 +2,20 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { RequestInterceptor } from './common/interceptors/request.interceptor';
+import { ErrorInterceptor } from './common/interceptors/error.interceptor';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalInterceptors(
+    new ErrorInterceptor(),
+    new RequestInterceptor(),
+    new ResponseInterceptor(),
+  );
+
   const configService = app.get<ConfigService>(ConfigService);
   const swagTitle = configService.get('swagger.title');
   const swagDescription = configService.get('swagger.description');
@@ -43,6 +53,8 @@ async function bootstrap() {
       version: appVersion,
     });
   }
+
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   await app.listen(appPort);
 }
